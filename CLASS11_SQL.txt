@@ -1,0 +1,398 @@
+mysql> use dbms
+Database changed
+mysql> select * from student
+    -> ;
++--------+---------+---------------+------------+
+| rollno | name    | date_of_birth | department |
++--------+---------+---------------+------------+
+|      1 | Shanju  | 2005-06-16    | CS         |
+|      2 | Kalai   | 2005-02-11    | CS         |
+|      3 | Harshit | 2005-03-07    | CS         |
+|      4 | Menaka  | 2006-05-17    | IT         |
+|      5 | Nagaraj | 2005-08-10    | IT         |
++--------+---------+---------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from marks ;
++--------+-------+-------+-------+-------+---------+
+| rollno | mark1 | mark2 | mark3 | total | average |
++--------+-------+-------+-------+-------+---------+
+|      1 |    99 |    98 |   100 |   297 |      99 |
+|      2 |    89 |    85 |    79 |   253 |      84 |
+|      3 |    98 |    75 |    99 |   272 |      91 |
+|      4 |    89 |    95 |    93 |   277 |      92 |
+|      5 |    99 |    99 |   100 |   298 |      99 |
++--------+-------+-------+-------+-------+---------+
+5 rows in set (0.00 sec)
+
+mysql> alter table student add primary key(rollno);
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> insert into student values(01,'surya','2025-06-26','cs');
+ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+mysql> insert into student values(01,'surya','2025-06-26',null);
+ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+mysql> insert into student values(null,'surya','2025-06-26',null);
+ERROR 1048 (23000): Column 'rollno' cannot be null
+mysql> alter table student add name foreign key(rollno);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'foreign key(rollno)' at line 1
+mysql> alter table student add foreign key(rollno);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1
+mysql> create table studdetails(
+    -> rollno int primary key,
+    -> subject varchar(225)primary key,
+    -> ^C
+mysql> create table studdetails(
+    -> rollno int,
+    -> subject varchar(225)primary key,
+    ->  varchar(225)primary key,
+    -> ^C
+mysql> 
+mysql>  create table allconstraints(
+    -> id int auto_increment primary key,
+    -> username varchar(225) unique not null,
+    -> age int  check (age>=18),
+    -> arrears int default null,
+    -> percentage double not null);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into allconstraints value(01,'shanju',20,99);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into allconstraints value(01,'shanju',20,,99);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '99)' at line 1
+mysql> insert into allconstraints value(01,'shanju',20,null,99);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from allconstraints;
++----+----------+------+---------+------------+
+| id | username | age  | arrears | percentage |
++----+----------+------+---------+------------+
+|  1 | shanju   |   20 |    NULL |         99 |
++----+----------+------+---------+------------+
+1 row in set (0.00 sec)
+
+mysql> insert into allconstraints (username,age,percentage) values ('madhu',19,92);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from allconstraints;
++----+----------+------+---------+------------+
+| id | username | age  | arrears | percentage |
++----+----------+------+---------+------------+
+|  1 | shanju   |   20 |    NULL |         99 |
+|  2 | madhu    |   19 |    NULL |         92 |
++----+----------+------+---------+------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into allconstraints (username,age,percentage) values ('madhu',19,92)('sudee',20,1,98);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '('sudee',20,1,98)' at line 1
+mysql> insert into allconstraints (username,age,percentage) values ('kalai',19,90)('sudee',20,1,98);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '('sudee',20,1,98)' at line 1
+mysql> insert into allconstraints (username,age,arrears,percentage) values ('kalai',19,2,90)('sudee',20,1,98);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '('sudee',20,1,98)' at line 1
+mysql> insert into allconstraints (username,age,arrears,percentage) values ('kalai',19,2,90),('sudee',20,1,98);
+Query OK, 2 rows affected (0.00 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from allconstraints;
++----+----------+------+---------+------------+
+| id | username | age  | arrears | percentage |
++----+----------+------+---------+------------+
+|  1 | shanju   |   20 |    NULL |         99 |
+|  2 | madhu    |   19 |    NULL |         92 |
+|  3 | kalai    |   19 |       2 |         90 |
+|  4 | sudee    |   20 |       1 |         98 |
++----+----------+------+---------+------------+
+4 rows in set (0.00 sec)
+
+mysql> insert into allconstraints value('menaka',25,null,96);
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+mysql> insert into allconstraints (username,age,arrears,percentage)value('menaka',25,null,96);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from allconstraints;
++----+----------+------+---------+------------+
+| id | username | age  | arrears | percentage |
++----+----------+------+---------+------------+
+|  1 | shanju   |   20 |    NULL |         99 |
+|  2 | madhu    |   19 |    NULL |         92 |
+|  3 | kalai    |   19 |       2 |         90 |
+|  4 | sudee    |   20 |       1 |         98 |
+|  5 | menaka   |   25 |    NULL |         96 |
++----+----------+------+---------+------------+
+5 rows in set (0.00 sec)
+
+mysql> CREATE TABLE IF NOT EXISTS EMPL(  EMPNO INT PRIMARY KEY,  EMPLOYEE VARCHAR(40) NOT NULL,  JOB VARCHAR(20),  MGR INT,  HIRE DATE,  SAL DECIMAL(10,2),  COMM FLOAT(10,2),  DEPTNO INT NOT NULL);INSERT INTO EMPL VALUES (8369,'SMITH    ','CLERK    ',8902,'1990-12-18',800.00 ,NULL,20),(499 ,'ANYA     ','SALESMAN ',8698,'1991-02-20',1600.00,300.00 ,30),(521 ,'SETH     ','SALESMAN ',8698,'1991-02-22',1250.00,500.00 ,30),(566 ,'MAHADEVAN','MANAGER  ',8839,'1991-04-02',2985.00,NULL   ,20),(654 ,'MOMIN    ','SALESMAN ',8698,'1991-09-28',1250.00,1400.00,30),(8698,'BINA     ','MANAGER  ',8839,'1991-05-01',2850.00,NULL   ,30),(8839,'AMIR     ','PRESIDENT',NULL,'1991-11-18',5000.00,NULL   ,10),(8844,'KULDEEP  ','SALESMAN ',8698,'1991-09-08',1500.00,0.00   ,30),(8882,'SHIAVNSH ','MANAGER  ',8839,'1991-06-09',2450.00,NULL   ,10),(8886,'ANOOP    ','CLERK    ',8888,'1993-01-12',1100.00,NULL   ,20),(8888,'SCOTT    ','ANALYST  ',8566,'1992-12-09',3000.00,NULL   ,20),(8900,'JATIN    ','CLERK    ',8698,'1991-12-03',950.00 ,NULL   ,30),(8902,'FAKIR    ','ANALYST  ',8566,'1991-12-03',3000.00,NULL   ,20),(8934,'MITA     ','CLERK    ',8839,'1992-01-23',1300.00,NULL   ,10);
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+ERROR 1062 (23000): Duplicate entry '8369' for key 'PRIMARY'
+mysql> Query OK, 0 rows affected (0.01 sec)
+    -> CREATE TABLE IF NOT EXISTS EMPL(  EMPNO INT PRIMARY KEY,  EMPLOYEE VARCHAR(40) NOT NULL,  JOB VARCHAR(20),  MGR INT,  HIRE DATE,  SAL DECIMAL(10,2),  COMM FLOAT(10,2),  DEPTNO INT NOT NULL);INSERT INTO EMPL VALUES (8369,'SMITH    ','CLERK    ',8902,'1990-12-18',800.00 ,NULL,20),(499 ,'ANYA     ','SALESMAN ',8698,'1991-02-20',1600.00,300.00 ,30),(521 ,'SETH     ','SALESMAN ',8698,'1991-02-22',1250.00,500.00 ,30),(566 ,'MAHADEVAN','MANAGER  ',8839,'1991-04-02',2985.00,NULL   ,20),(654 ,'MOMIN    ','SALESMAN ',8698,'1991-09-28',1250.00,1400.00,30),(8698,'BINA     ','MANAGER  ',8839,'1991-05-01',2850.00,NULL   ,30),(8839,'AMIR     ','PRESIDENT',NULL,'1991-11-18',5000.00,NULL   ,10),(8844,'KULDEEP  ','SALESMAN ',8698,'1991-09-08',1500.00,0.00   ,30),(8882,'SHIAVNSH ','MANAGER  ',8839,'1991-06-09',2450.00,NULL   ,10),(8886,'ANOOP    ','CLERK    ',8888,'1993-01-12',1100.00,NULL   ,20),(8888,'SCOTT    ','ANALYST  ',8566,'1992-12-09',3000.00,NULL   ,20),(8900,'JATIN    ','CLERK    ',8698,'1991-12-03',950.00 ,NULL   ,30),(8902,'FAKIR    ','ANALYST  ',8566,'1991-12-03',3000.00,NULL   ,20),(8934,'MITA     ','CLERK    ',8839,'1992-01-23',1300.00,NULL   ,10);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'Query OK, 0 rows affected (0.01 sec)
+CREATE TABLE IF NOT EXISTS EMPL(  EMPNO ...' at line 1
+ERROR 1062 (23000): Duplicate entry '8369' for key 'PRIMARY'
+mysql> CREATE TABLE IF NOT EXISTS EMPL(  EMPNO INT PRIMARY KEY,  EMPLOYEE VARCHAR(40) NOT NULL,  JOB VARCHAR(20),  MGR INT,  HIRE DATE,  SAL DECIMAL(10,2),  COMM FLOAT(10,2),  DEPTNO INT NOT NULL);INSERT INTO EMPL VALUES (8369,'SMITH    ','CLERK    ',8902,'1990-12-18',800.00 ,NULL,20),(499 ,'ANYA     ','SALESMAN ',8698,'1991-02-20',1600.00,300.00 ,30),(521 ,'SETH     ','SALESMAN ',8698,'1991-02-22',1250.00,500.00 ,30),(566 ,'MAHADEVAN','MANAGER  ',8839,'1991-04-02',2985.00,NULL   ,20),(654 ,'MOMIN    ','SALESMAN ',8698,'1991-09-28',1250.00,1400.00,30),(8698,'BINA     ','MANAGER  ',8839,'1991-05-01',2850.00,NULL   ,30),(8839,'AMIR     ','PRESIDENT',NULL,'1991-11-18',5000.00,NULL   ,10),(8844,'KULDEEP  ','SALESMAN ',8698,'1991-09-08',1500.00,0.00   ,30),(8882,'SHIAVNSH ','MANAGER  ',8839,'1991-06-09',2450.00,NULL   ,10),(8886,'ANOOP    ','CLERK    ',8888,'1993-01-12',1100.00,NULL   ,20),(8888,'SCOTT    ','ANALYST  ',8566,'1992-12-09',3000.00,NULL   ,20),(8900,'JATIN    ','CLERK    ',8698,'1991-12-03',950.00 ,NULL   ,30),(8902,'FAKIR    ','ANALYST  ',8566,'1991-12-03',3000.00,NULL   ,20),(8934,'MITA     ','CLERK    ',8839,'1992-01-23',1300.00,NULL   ,10);
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+ERROR 1062 (23000): Duplicate entry '8369' for key 'PRIMARY'
+mysql> use dbms
+Database changed
+mysql> select * from EMPT;
+ERROR 1146 (42S02): Table 'dbms.empt' doesn't exist
+mysql> select * from EMPl;
++-------+-----------+-----------+------+------------+---------+---------+--------+
+| EMPNO | EMPLOYEE  | JOB       | MGR  | HIRE       | SAL     | COMM    | DEPTNO |
++-------+-----------+-----------+------+------------+---------+---------+--------+
+|   499 | ANYA      | SALESMAN  | 8698 | 1991-02-20 | 1600.00 |  300.00 |     30 |
+|   521 | SETH      | SALESMAN  | 8698 | 1991-02-22 | 1250.00 |  500.00 |     30 |
+|   566 | MAHADEVAN | MANAGER   | 8839 | 1991-04-02 | 2985.00 |    NULL |     20 |
+|   654 | MOMIN     | SALESMAN  | 8698 | 1991-09-28 | 1250.00 | 1400.00 |     30 |
+|  8369 | SMITH     | CLERK     | 8902 | 1990-12-18 |  800.00 |    NULL |     20 |
+|  8698 | BINA      | MANAGER   | 8839 | 1991-05-01 | 2850.00 |    NULL |     30 |
+|  8839 | AMIR      | PRESIDENT | NULL | 1991-11-18 | 5000.00 |    NULL |     10 |
+|  8844 | KULDEEP   | SALESMAN  | 8698 | 1991-09-08 | 1500.00 |    0.00 |     30 |
+|  8882 | SHIAVNSH  | MANAGER   | 8839 | 1991-06-09 | 2450.00 |    NULL |     10 |
+|  8886 | ANOOP     | CLERK     | 8888 | 1993-01-12 | 1100.00 |    NULL |     20 |
+|  8888 | SCOTT     | ANALYST   | 8566 | 1992-12-09 | 3000.00 |    NULL |     20 |
+|  8900 | JATIN     | CLERK     | 8698 | 1991-12-03 |  950.00 |    NULL |     30 |
+|  8902 | FAKIR     | ANALYST   | 8566 | 1991-12-03 | 3000.00 |    NULL |     20 |
+|  8934 | MITA      | CLERK     | 8839 | 1992-01-23 | 1300.00 |    NULL |     10 |
++-------+-----------+-----------+------+------------+---------+---------+--------+
+14 rows in set (0.00 sec)
+
+mysql> select * from dept;
++--------+------------+----------+
+| deptno | deptname   | loc      |
++--------+------------+----------+
+|     10 | Accounting | New york |
+|     20 | CS         | dallas   |
+|     30 | IT         | chicago  |
+|     40 | BCA        | boston   |
++--------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select count(EMPNO) from EMPL;
++--------------+
+| count(EMPNO) |
++--------------+
+|           14 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> select count(distinct DEPTNO) from EMPL;
++------------------------+
+| count(distinct DEPTNO) |
++------------------------+
+|                      3 |
++------------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from EMPL where deptno=20;
++-------+-----------+-----------+------+------------+---------+------+--------+
+| EMPNO | EMPLOYEE  | JOB       | MGR  | HIRE       | SAL     | COMM | DEPTNO |
++-------+-----------+-----------+------+------------+---------+------+--------+
+|   566 | MAHADEVAN | MANAGER   | 8839 | 1991-04-02 | 2985.00 | NULL |     20 |
+|  8369 | SMITH     | CLERK     | 8902 | 1990-12-18 |  800.00 | NULL |     20 |
+|  8886 | ANOOP     | CLERK     | 8888 | 1993-01-12 | 1100.00 | NULL |     20 |
+|  8888 | SCOTT     | ANALYST   | 8566 | 1992-12-09 | 3000.00 | NULL |     20 |
+|  8902 | FAKIR     | ANALYST   | 8566 | 1991-12-03 | 3000.00 | NULL |     20 |
++-------+-----------+-----------+------+------------+---------+------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select * from EMPL order by DEPTNO;
++-------+-----------+-----------+------+------------+---------+---------+--------+
+| EMPNO | EMPLOYEE  | JOB       | MGR  | HIRE       | SAL     | COMM    | DEPTNO |
++-------+-----------+-----------+------+------------+---------+---------+--------+
+|  8934 | MITA      | CLERK     | 8839 | 1992-01-23 | 1300.00 |    NULL |     10 |
+|  8839 | AMIR      | PRESIDENT | NULL | 1991-11-18 | 5000.00 |    NULL |     10 |
+|  8882 | SHIAVNSH  | MANAGER   | 8839 | 1991-06-09 | 2450.00 |    NULL |     10 |
+|  8902 | FAKIR     | ANALYST   | 8566 | 1991-12-03 | 3000.00 |    NULL |     20 |
+|   566 | MAHADEVAN | MANAGER   | 8839 | 1991-04-02 | 2985.00 |    NULL |     20 |
+|  8369 | SMITH     | CLERK     | 8902 | 1990-12-18 |  800.00 |    NULL |     20 |
+|  8888 | SCOTT     | ANALYST   | 8566 | 1992-12-09 | 3000.00 |    NULL |     20 |
+|  8886 | ANOOP     | CLERK     | 8888 | 1993-01-12 | 1100.00 |    NULL |     20 |
+|  8900 | JATIN     | CLERK     | 8698 | 1991-12-03 |  950.00 |    NULL |     30 |
+|  8844 | KULDEEP   | SALESMAN  | 8698 | 1991-09-08 | 1500.00 |    0.00 |     30 |
+|  8698 | BINA      | MANAGER   | 8839 | 1991-05-01 | 2850.00 |    NULL |     30 |
+|   654 | MOMIN     | SALESMAN  | 8698 | 1991-09-28 | 1250.00 | 1400.00 |     30 |
+|   521 | SETH      | SALESMAN  | 8698 | 1991-02-22 | 1250.00 |  500.00 |     30 |
+|   499 | ANYA      | SALESMAN  | 8698 | 1991-02-20 | 1600.00 |  300.00 |     30 |
++-------+-----------+-----------+------+------------+---------+---------+--------+
+14 rows in set (0.00 sec)
+
+mysql> select count( DEPTNO) from EMPL;
++----------------+
+| count( DEPTNO) |
++----------------+
+|             14 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> insert into dept values(10,'Accounting','New york'),(20,'CS','dallas'),(30,'IT','chicago'),(40,'BCA','boston');
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from dept;
++--------+------------+----------+
+| deptno | deptname   | loc      |
++--------+------------+----------+
+|     10 | Accounting | New york |
+|     20 | CS         | dallas   |
+|     30 | IT         | chicago  |
+|     40 | BCA        | boston   |
+|     10 | Accounting | New york |
+|     20 | CS         | dallas   |
+|     30 | IT         | chicago  |
+|     40 | BCA        | boston   |
++--------+------------+----------+
+8 rows in set (0.00 sec)
+
+mysql> drop table dept;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table dept(
+    -> deptno int,
+    -> deptname varchar(225),
+    ->  loc varchar(225));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into dept values(10,'Accounting','New york'),(20,'CS','dallas'),(30,'IT','chicago'),(40,'BCA','boston');
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from dept;
++--------+------------+----------+
+| deptno | deptname   | loc      |
++--------+------------+----------+
+|     10 | Accounting | New york |
+|     20 | CS         | dallas   |
+|     30 | IT         | chicago  |
+|     40 | BCA        | boston   |
++--------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select * from EMPl;
++-------+-----------+-----------+------+------------+---------+---------+--------+
+| EMPNO | EMPLOYEE  | JOB       | MGR  | HIRE       | SAL     | COMM    | DEPTNO |
++-------+-----------+-----------+------+------------+---------+---------+--------+
+|   499 | ANYA      | SALESMAN  | 8698 | 1991-02-20 | 1600.00 |  300.00 |     30 |
+|   521 | SETH      | SALESMAN  | 8698 | 1991-02-22 | 1250.00 |  500.00 |     30 |
+|   566 | MAHADEVAN | MANAGER   | 8839 | 1991-04-02 | 2985.00 |    NULL |     20 |
+|   654 | MOMIN     | SALESMAN  | 8698 | 1991-09-28 | 1250.00 | 1400.00 |     30 |
+|  8369 | SMITH     | CLERK     | 8902 | 1990-12-18 |  800.00 |    NULL |     20 |
+|  8698 | BINA      | MANAGER   | 8839 | 1991-05-01 | 2850.00 |    NULL |     30 |
+|  8839 | AMIR      | PRESIDENT | NULL | 1991-11-18 | 5000.00 |    NULL |     10 |
+|  8844 | KULDEEP   | SALESMAN  | 8698 | 1991-09-08 | 1500.00 |    0.00 |     30 |
+|  8882 | SHIAVNSH  | MANAGER   | 8839 | 1991-06-09 | 2450.00 |    NULL |     10 |
+|  8886 | ANOOP     | CLERK     | 8888 | 1993-01-12 | 1100.00 |    NULL |     20 |
+|  8888 | SCOTT     | ANALYST   | 8566 | 1992-12-09 | 3000.00 |    NULL |     20 |
+|  8900 | JATIN     | CLERK     | 8698 | 1991-12-03 |  950.00 |    NULL |     30 |
+|  8902 | FAKIR     | ANALYST   | 8566 | 1991-12-03 | 3000.00 |    NULL |     20 |
+|  8934 | MITA      | CLERK     | 8839 | 1992-01-23 | 1300.00 |    NULL |     10 |
++-------+-----------+-----------+------+------------+---------+---------+--------+
+14 rows in set (0.00 sec)
+
+mysql> select * ,dept.deptname from EMPL
+    -> inner join dep on emp.deptno=dep.deptno;
+ERROR 1146 (42S02): Table 'dbms.dep' doesn't exist
+mysql> inner join dept on emp.deptno=dept.deptno;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'inner join dept on emp.deptno=dept.deptno' at line 1
+mysql> select * ,dept.deptname from EMPL
+    -> select * ,dept.deptname from dept
+    -> inner join dept on EMPL.deptno=dept.deptno;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'select * ,dept.deptname from dept
+inner join dept on EMPL.deptno=dept.deptno' at line 2
+mysql> select * ,dept.deptname from dept
+    -> inner join dept on EMPL.DEPTNO=dept.deptno;
+ERROR 1066 (42000): Not unique table/alias: 'dept'
+mysql> select * ,dept.deptname from dept
+    -> ^C
+mysql> select * ,dept.deptname from EMPL
+    -> inner join dept on EMPL.DEPTNO=dept.deptno;
++-------+-----------+-----------+------+------------+---------+---------+--------+--------+------------+----------+------------+
+| EMPNO | EMPLOYEE  | JOB       | MGR  | HIRE       | SAL     | COMM    | DEPTNO | deptno | deptname   | loc      | deptname   |
++-------+-----------+-----------+------+------------+---------+---------+--------+--------+------------+----------+------------+
+|   499 | ANYA      | SALESMAN  | 8698 | 1991-02-20 | 1600.00 |  300.00 |     30 |     30 | IT         | chicago  | IT         |
+|   521 | SETH      | SALESMAN  | 8698 | 1991-02-22 | 1250.00 |  500.00 |     30 |     30 | IT         | chicago  | IT         |
+|   566 | MAHADEVAN | MANAGER   | 8839 | 1991-04-02 | 2985.00 |    NULL |     20 |     20 | CS         | dallas   | CS         |
+|   654 | MOMIN     | SALESMAN  | 8698 | 1991-09-28 | 1250.00 | 1400.00 |     30 |     30 | IT         | chicago  | IT         |
+|  8369 | SMITH     | CLERK     | 8902 | 1990-12-18 |  800.00 |    NULL |     20 |     20 | CS         | dallas   | CS         |
+|  8698 | BINA      | MANAGER   | 8839 | 1991-05-01 | 2850.00 |    NULL |     30 |     30 | IT         | chicago  | IT         |
+|  8839 | AMIR      | PRESIDENT | NULL | 1991-11-18 | 5000.00 |    NULL |     10 |     10 | Accounting | New york | Accounting |
+|  8844 | KULDEEP   | SALESMAN  | 8698 | 1991-09-08 | 1500.00 |    0.00 |     30 |     30 | IT         | chicago  | IT         |
+|  8882 | SHIAVNSH  | MANAGER   | 8839 | 1991-06-09 | 2450.00 |    NULL |     10 |     10 | Accounting | New york | Accounting |
+|  8886 | ANOOP     | CLERK     | 8888 | 1993-01-12 | 1100.00 |    NULL |     20 |     20 | CS         | dallas   | CS         |
+|  8888 | SCOTT     | ANALYST   | 8566 | 1992-12-09 | 3000.00 |    NULL |     20 |     20 | CS         | dallas   | CS         |
+|  8900 | JATIN     | CLERK     | 8698 | 1991-12-03 |  950.00 |    NULL |     30 |     30 | IT         | chicago  | IT         |
+|  8902 | FAKIR     | ANALYST   | 8566 | 1991-12-03 | 3000.00 |    NULL |     20 |     20 | CS         | dallas   | CS         |
+|  8934 | MITA      | CLERK     | 8839 | 1992-01-23 | 1300.00 |    NULL |     10 |     10 | Accounting | New york | Accounting |
++-------+-----------+-----------+------+------------+---------+---------+--------+--------+------------+----------+------------+
+14 rows in set (0.00 sec)
+
+mysql> select EMPL.EMPNO,EMPL.ENAME,EMPL.JOB,dept.dname from EMPL
+    -> left join dept on EMPL.DEPTNO=dept.deptno;
+ERROR 1054 (42S22): Unknown column 'EMPL.ENAME' in 'field list'
+mysql> select EMPL.EMPNO,EMPL.EMPLOYEE,EMPL.JOB,dept.dname from EMPL
+    -> left join dept on EMPL.DEPTNO=dept.deptno;
+ERROR 1054 (42S22): Unknown column 'dept.dname' in 'field list'
+mysql> select EMPL.EMPNO,EMPL.ENAME,EMPL.JOB,dept.dname from EMPL
+    -> ^C
+mysql> select EMPL.EMPNO,EMPL.ENAME,EMPL.JOB,dept.deptname from EMPL
+    -> left join dept on EMPL.DEPTNO=dept.deptno;
+ERROR 1054 (42S22): Unknown column 'EMPL.ENAME' in 'field list'
+mysql> select EMPL.EMPNO,EMPL.EMPLOYEE,EMPL.JOB,dept.deptname from EMPL
+    -> left join dept on EMPL.DEPTNO=dept.deptno;
++-------+-----------+-----------+------------+
+| EMPNO | EMPLOYEE  | JOB       | deptname   |
++-------+-----------+-----------+------------+
+|  8839 | AMIR      | PRESIDENT | Accounting |
+|  8882 | SHIAVNSH  | MANAGER   | Accounting |
+|  8934 | MITA      | CLERK     | Accounting |
+|   566 | MAHADEVAN | MANAGER   | CS         |
+|  8369 | SMITH     | CLERK     | CS         |
+|  8886 | ANOOP     | CLERK     | CS         |
+|  8888 | SCOTT     | ANALYST   | CS         |
+|  8902 | FAKIR     | ANALYST   | CS         |
+|   499 | ANYA      | SALESMAN  | IT         |
+|   521 | SETH      | SALESMAN  | IT         |
+|   654 | MOMIN     | SALESMAN  | IT         |
+|  8698 | BINA      | MANAGER   | IT         |
+|  8844 | KULDEEP   | SALESMAN  | IT         |
+|  8900 | JATIN     | CLERK     | IT         |
++-------+-----------+-----------+------------+
+14 rows in set (0.00 sec)
+
+mysql> select EMPL.EMPNO,EMPL.EMPLOYEE,EMPL.JOB,dept.deptname from EMPL
+    -> left join dept on EMPL.DEPTNO=dept.deptno
+    -> select EMPL.EMPNO,EMPL.EMPLOYEE,EMPL.JOB,dept.deptname from EMPL
+    -> right join dept on EMPL.DEPTNO=dept.deptno
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'select EMPL.EMPNO,EMPL.EMPLOYEE,EMPL.JOB,dept.deptname from EMPL
+right join d...' at line 3
+mysql> select EMPL.EMPNO,EMPL.EMPLOYEE,EMPL.JOB,dept.deptname from EMPL
+    -> left join dept on EMPL.DEPTNO=dept.deptno
+    -> union
+    -> select EMPL.EMPNO,EMPL.EMPLOYEE,EMPL.JOB,dept.deptname from EMPL
+    -> right join dept on EMPL.DEPTNO=dept.deptno;
++-------+-----------+-----------+------------+
+| EMPNO | EMPLOYEE  | JOB       | deptname   |
++-------+-----------+-----------+------------+
+|  8839 | AMIR      | PRESIDENT | Accounting |
+|  8882 | SHIAVNSH  | MANAGER   | Accounting |
+|  8934 | MITA      | CLERK     | Accounting |
+|   566 | MAHADEVAN | MANAGER   | CS         |
+|  8369 | SMITH     | CLERK     | CS         |
+|  8886 | ANOOP     | CLERK     | CS         |
+|  8888 | SCOTT     | ANALYST   | CS         |
+|  8902 | FAKIR     | ANALYST   | CS         |
+|   499 | ANYA      | SALESMAN  | IT         |
+|   521 | SETH      | SALESMAN  | IT         |
+|   654 | MOMIN     | SALESMAN  | IT         |
+|  8698 | BINA      | MANAGER   | IT         |
+|  8844 | KULDEEP   | SALESMAN  | IT         |
+|  8900 | JATIN     | CLERK     | IT         |
+|  NULL | NULL      | NULL      | BCA        |
++-------+-----------+-----------+------------+
+15 rows in set (0.00 sec)
+
+mysql> notee
